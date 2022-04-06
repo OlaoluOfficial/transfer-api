@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "yarn tsc && node ./bin/www"
+    "start": "node ./bin/www",
+    "build": "yarn tsc"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
