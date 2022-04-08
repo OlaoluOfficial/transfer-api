@@ -7,16 +7,14 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const ctrl_1 = require("../controllers/ctrl");
 router.post('/create-account', async (req, res) => {
-    const { balance } = req.body;
-    const newAccount = await ctrl_1.createAccount(+balance);
-    // .then(account => {
-    //   res.status(201).json(account);
-    // })
-    // .catch(err => {
-    //   res.status(500).json(err);
-    // });
-    // res.status(201).send(newAccount);
-    res.status(201).json({ msg: newAccount });
+    try {
+        const { balance } = req.body;
+        const newAccount = await ctrl_1.createAccount(+balance);
+        res.status(201).json({ msg: newAccount });
+    }
+    catch (error) {
+        res.status(400).json({ msg: 'Something went wrong' });
+    }
 });
 router.get('/balance/:accountNumber', async (req, res) => {
     const accountNumber = req.params.accountNumber;
@@ -29,13 +27,23 @@ router.get('/balance/:accountNumber', async (req, res) => {
     }
 });
 router.get('/balance', async (req, res) => {
-    const balances = await ctrl_1.getAllBalances();
-    res.status(200).json(JSON.parse(balances));
+    try {
+        const balances = await ctrl_1.getAllBalances();
+        res.status(200).json(JSON.parse(balances));
+    }
+    catch (error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
 });
 router.post('/transfer', async (req, res) => {
-    const transaction = req.body;
-    const result = await ctrl_1.createTransaction(transaction);
-    res.status(200).json(result);
+    try {
+        const transaction = req.body;
+        const result = await ctrl_1.createTransaction(transaction);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
 });
 exports.default = router;
 //# sourceMappingURL=indexRoute.js.map
