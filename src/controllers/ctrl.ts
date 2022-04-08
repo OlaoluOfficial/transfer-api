@@ -35,7 +35,7 @@ export async function getSingleBalance(accountNumber: string) {
   const data = await readBalancesDB();
   const balances = JSON.parse(data);
   const singleBalance = balances.find(
-    (balance: any) => balance.accountNumber === accountNumber,
+    (balance: any) => balance.accountNumber === accountNumber
   );
   if (!singleBalance) {
     return { message: 'Account number does not exist' };
@@ -48,7 +48,6 @@ export async function createAccount(balance: number) {
   const data = await readBalancesDB();
   const existingBalances = JSON.parse(data);
 
-  // generate random account number of 10 digits
   const accountNumber = Math.floor(Math.random() * 1000000000000).toString();
 
   const account: Balances = {
@@ -77,7 +76,7 @@ export async function createTransaction(transaction: Transactions) {
   };
 
   const senderIndex = existingBalances.findIndex(
-    (balance: any) => balance.accountNumber === transaction.senderAccountNumber,
+    (balance: any) => balance.accountNumber === transaction.senderAccountNumber
   );
   if (senderIndex === -1)
     throw new Error('Sender account number does not exist');
@@ -90,16 +89,18 @@ export async function createTransaction(transaction: Transactions) {
 
   const receiverIndex = existingBalances.findIndex(
     (balance: any) =>
-      balance.accountNumber === transaction.receiverAccountNumber,
+      balance.accountNumber === transaction.receiverAccountNumber
   );
-  const receiverBalance = existingBalances[receiverIndex];
 
   if (receiverIndex === -1) {
-    senderBalance.balance -= transaction.amount;
-  } else {
-    senderBalance.balance -= transaction.amount;
-    receiverBalance.balance += transaction.amount;
+    return { message: 'Receiver account number does not exist' };
   }
+
+  const receiverBalance = existingBalances[receiverIndex];
+
+  senderBalance.balance -= transaction.amount;
+  receiverBalance.balance += transaction.amount;
+
   await writeBalancesDB(existingBalances);
 
   existingTransactions.push(transfer);
