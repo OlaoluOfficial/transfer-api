@@ -8,16 +8,13 @@ import {
 } from '../controllers/ctrl';
 
 router.post('/create-account', async (req, res) => {
-  const { balance } = req.body;
-  const newAccount = await createAccount(+balance);
-  // .then(account => {
-  //   res.status(201).json(account);
-  // })
-  // .catch(err => {
-  //   res.status(500).json(err);
-  // });
-  // res.status(201).send(newAccount);
-  res.status(201).json({ msg: newAccount });
+  try {
+    const { balance } = req.body;
+    const newAccount = await createAccount(+balance);
+    res.status(201).json({ msg: newAccount });
+  } catch (error) {
+    res.status(400).json({ msg: 'Something went wrong' });
+  }
 });
 
 router.get('/balance/:accountNumber', async (req, res) => {
@@ -31,14 +28,22 @@ router.get('/balance/:accountNumber', async (req, res) => {
 });
 
 router.get('/balance', async (req, res) => {
-  const balances = await getAllBalances();
-  res.status(200).json(JSON.parse(balances));
+  try {
+    const balances = await getAllBalances();
+    res.status(200).json(JSON.parse(balances));
+  } catch (error) {
+    res.status(400).json({ message: 'Something went wrong' });
+  }
 });
 
 router.post('/transfer', async (req, res) => {
-  const transaction = req.body;
-  const result = await createTransaction(transaction);
-  res.status(200).json(result);
+  try {
+    const transaction = req.body;
+    const result = await createTransaction(transaction);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: 'Something went wrong' });
+  }
 });
 
 export default router;
