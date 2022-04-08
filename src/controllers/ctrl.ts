@@ -56,7 +56,7 @@ export async function makeTransaction(req: Request, res: Response) {
   try {
     const transaction = req.body;
     const result = await createTransaction(transaction);
-    res.status(200).json(result);
+    res.status(201).json(result);
   } catch (error) {
     res.status(400).json({ message: 'Something went wrong' });
   }
