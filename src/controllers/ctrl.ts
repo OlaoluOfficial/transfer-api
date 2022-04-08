@@ -42,7 +42,7 @@ export async function getAccount(req: Request, res: Response) {
 }
 export async function getTransactions(req: Request, res: Response) {
   const transactions = await getAllTransactions();
-  res.status(200).json(transactions);
+  res.status(200).json(JSON.parse(transactions));
 }
 export async function getBalanaces(req: Request, res: Response) {
   try {
