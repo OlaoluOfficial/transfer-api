@@ -16,9 +16,9 @@ const createAccountSchema = zod.object({
 });
 const createTransferSchema = zod.object({
   reference: zod.string().optional(),
-  senderAccountNumber: zod.string(),
+  from: zod.string(),
   amount: zod.number(),
-  receiverAccountNumber: zod.string(),
+  to: zod.string(),
   transferDescription: zod.string(),
   createdAt: zod.string().optional(),
 });
@@ -110,7 +110,7 @@ export async function createTransaction(transaction: Transactions) {
   };
 
   const senderIndex = existingBalances.findIndex(
-    (balance: any) => balance.accountNumber === transaction.senderAccountNumber
+    (balance: any) => balance.accountNumber === transaction.from
   );
   if (senderIndex === -1)
     throw new Error('Sender account number does not exist');
@@ -122,8 +122,7 @@ export async function createTransaction(transaction: Transactions) {
   }
 
   const receiverIndex = existingBalances.findIndex(
-    (balance: any) =>
-      balance.accountNumber === transaction.receiverAccountNumber
+    (balance: any) => balance.accountNumber === transaction.to
   );
 
   if (receiverIndex === -1) {
