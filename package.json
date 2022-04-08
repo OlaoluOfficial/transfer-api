@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "yarn tsc && node ./bin/www",
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "test": "jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
