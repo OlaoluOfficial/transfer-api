@@ -5,9 +5,8 @@ import {
   writeTransactionsDB,
 } from '../models/model';
 import { randomUUID } from 'node:crypto';
-
+import { Request, Response } from 'express';
 import { Transactions, Balances } from '../types';
-
 import zod from 'zod';
 
 const createAccountSchema = zod.object({
@@ -15,7 +14,6 @@ const createAccountSchema = zod.object({
   balance: zod.number(),
   createdAt: zod.string().optional(),
 });
-
 const createTransferSchema = zod.object({
   reference: zod.string().optional(),
   senderAccountNumber: zod.string(),
@@ -24,7 +22,45 @@ const createTransferSchema = zod.object({
   transferDescription: zod.string(),
   createdAt: zod.string().optional(),
 });
-
+export async function createNewAccount(req: Request, res: Response) {
+  try {
+    const { balance } = req.body;
+    const newAccount = await createAccount(+balance);
+    res.status(201).json({ msg: newAccount });
+  } catch (error) {
+    res.status(400).json({ msg: 'Something went wrong' });
+  }
+}
+export async function getAccount(req: Request, res: Response) {
+  const accountNumber = req.params.accountNumber;
+  const balance = await getSingleBalance(accountNumber);
+  if (!balance) {
+    res.status(404).json({ message: 'Account number does not exist' });
+  } else {
+    res.status(200).json({ msg: balance });
+  }
+}
+export async function getTransactions(req: Request, res: Response) {
+  const transactions = await getAllTransactions();
+  res.status(200).json(transactions);
+}
+export async function getBalanaces(req: Request, res: Response) {
+  try {
+    const balances = await getAllBalances();
+    res.status(200).json(JSON.parse(balances));
+  } catch (error) {
+    res.status(400).json({ message: 'Something went wrong' });
+  }
+}
+export async function makeTransaction(req: Request, res: Response) {
+  try {
+    const transaction = req.body;
+    const result = await createTransaction(transaction);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: 'Something went wrong' });
+  }
+}
 export function getAllBalances() {
   return readBalancesDB();
 }
@@ -42,7 +78,6 @@ export async function getSingleBalance(accountNumber: string) {
   }
   return singleBalance;
 }
-
 export async function createAccount(balance: number) {
   const value = createAccountSchema.parse({ balance });
   const data = await readBalancesDB();
@@ -60,7 +95,6 @@ export async function createAccount(balance: number) {
   await writeBalancesDB(existingBalances);
   return account;
 }
-
 export async function createTransaction(transaction: Transactions) {
   const value = createTransferSchema.parse(transaction);
 
